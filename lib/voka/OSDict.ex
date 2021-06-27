@@ -81,9 +81,15 @@ defmodule Voka.OSDict do
       |> utf8_string([{:not, ?/}], min: 1)
       |> ignore(string("/"))
       |> ignore(spaces)
-      |> ignore(string("<"))
-      |> utf8_string([{:not, ?>}], min: 1)
-      |> ignore(string(">"))
+      |> optional(
+        choice([
+          ignore(string("<"))
+          |> utf8_string([{:not, ?>}], min: 1)
+          |> ignore(string(">")),
+          empty
+        ])
+        |> tag(:nature)
+      )
       |> ignore(repeat(string("\n")))
       |> choice([
         multi_defs,
@@ -93,9 +99,13 @@ defmodule Voka.OSDict do
       |> reduce({:to_word, []})
     )
 
-  defp to_word([word, phonetic, nature, {:defs, defs}]) do
+  defp to_word([word, phonetic, {:nature, nature}, {:defs, defs}]) do
+    nature = unwrap(nature)
     %{word: word, phonetic: phonetic, nature: nature, defs: defs}
   end
+
+  defp unwrap([item]), do: unwrap(item)
+  defp unwrap(item), do: item
 
   defparsec(:parse_result, result, debug: true)
 
