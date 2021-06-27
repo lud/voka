@@ -69,10 +69,11 @@ defmodule Voka.OSDict do
     |> ignore(string("definition"))
     |> optional(ignore(string("s")))
     |> ignore(string(" found\n\n"))
+    |> ignore(repeat(string("\n")))
     |> repeat(
       ignore(string("From "))
       |> ignore(utf8_string([{:not, ?\n}], min: 1))
-      |> ignore(string("\n\n"))
+      |> ignore(repeat(string("\n")))
       |> ignore(spaces)
       |> utf8_string([{:not, 32}], min: 1)
       |> ignore(spaces)
@@ -83,7 +84,7 @@ defmodule Voka.OSDict do
       |> ignore(string("<"))
       |> utf8_string([{:not, ?>}], min: 1)
       |> ignore(string(">"))
-      |> ignore(string("\n"))
+      |> ignore(repeat(string("\n")))
       |> choice([
         multi_defs,
         single_def
