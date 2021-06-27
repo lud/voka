@@ -2,65 +2,106 @@ defmodule Voka.OSDict do
   import NimbleParsec
 
   def fra_to_spa(word) do
-    search(word, "fd-fra-spa")
+    with {:ok, parsed} <- search(word, "fd-fra-spa") do
+      cast_parsed(parsed)
+    end
   end
 
   def spa_to_eng(word) do
-    search(word, "fd-spa-eng")
+    with {:ok, parsed} <- search(word, "fd-spa-eng") do
+      cast_parsed(parsed)
+    end
+  end
+
+  defp cast_parsed(results) do
+    defs =
+      Enum.map(results, fn {:word,
+                            [word, phonetic, {:nature, nature}, [{:translation, translations}]]} ->
+        nature = unwrap_nature(nature)
+        translations = unwrap_defs(translations, nil, [])
+        %{word: word, phonetic: phonetic, nature: nature, translations: translations}
+      end)
+
+    {:ok, defs}
+  end
+
+  defp unwrap_nature([item]), do: unwrap_nature(item)
+  defp unwrap_nature(item), do: item
+
+  defp unwrap_defs(list, context, acc)
+
+  defp unwrap_defs([{:context, [ctx]} | rest], _, acc) do
+    unwrap_defs(rest, ctx, acc)
+  end
+
+  defp unwrap_defs([{:trans, [trans]} | rest], ctx, acc) do
+    acc = [%{context: ctx, trans: trans} | acc]
+    unwrap_defs(rest, ctx, acc)
+  end
+
+  defp unwrap_defs([], _ctx, acc) do
+    acc
   end
 
   def search(word, database) do
-    {out, 0} = System.cmd("dict", ~w(--database #{database} --nocorrect #{word}))
-    IO.puts([IO.ANSI.cyan(), out, IO.ANSI.default_color()])
-    parse_result!(out)
+    case System.cmd("dict", ~w(--database #{database} --nocorrect #{word})) do
+      {out, 0} ->
+        IO.puts([IO.ANSI.cyan(), out, IO.ANSI.default_color()])
+
+        case parse_result(out) do
+          {:ok, acc, "", context, line, column} ->
+            {:ok, acc}
+
+          {:ok, acc, rest, context, line, column} ->
+            rest |> IO.inspect(label: "rest")
+            {:ok, acc}
+
+          {:error, message, rest, context, line, column} ->
+            {:error, message}
+        end
+
+      {out, 20} ->
+        [IO.ANSI.yellow(), out, IO.ANSI.default_color()]
+
+        {:error, {:no_def, word, database}}
+    end
   end
 
   spaces = repeat(string(" "))
 
+  trans_line =
+    optional(
+      ignore(string("["))
+      |> utf8_string([{:not, ?]}], min: 1)
+      |> ignore(string("] "))
+      |> tag(:context)
+    )
+    |> repeat(
+      utf8_string([{:not, ?,}, {:not, ?\n}], min: 1)
+      |> optional(ignore(string(", ")))
+      |> tag(:trans)
+    )
+    |> ignore(string("\n"))
+    |> tag(:translation)
+
   single_def =
     ignore(spaces)
-    |> repeat(
-      optional(
-        ignore(string("["))
-        |> utf8_string([{:not, ?]}], min: 1)
-        |> ignore(string("] "))
-      )
-      |> utf8_string([{:not, ?,}, {:not, ?\n}], min: 1)
-      |> optional(ignore(string(", ")))
-    )
-    |> reduce({:reduce_singles, []})
-    |> ignore(string("\n"))
+    |> concat(trans_line)
+    |> reduce({List, :wrap, []})
 
   num_def =
     ignore(spaces)
     |> ignore(ascii_string([?0..?9], min: 1))
     |> ignore(string("."))
     |> ignore(spaces)
-    |> ignore(string("["))
-    |> utf8_string([{:not, ?]}], min: 1)
-    |> ignore(string("] "))
-    |> utf8_string([{:not, ?\n}], min: 1)
-    |> ignore(string("\n"))
-    |> reduce({:to_num_def, []})
+    |> concat(trans_line)
 
   multi_defs =
     times(num_def, min: 2)
-    |> reduce({:reduce_multis, []})
+    |> map({:collect_defs, []})
 
-  defp reduce_singles(words) do
-    words =
-      words
-      |> Enum.map(&%{word: &1, context: nil})
-
-    {:defs, words}
-  end
-
-  defp reduce_multis(words) do
-    {:defs, words}
-  end
-
-  defp to_num_def([context, word]) do
-    %{word: word, context: context}
+  defp collect_defs(word) do
+    {:collected, word}
   end
 
   result =
@@ -96,16 +137,8 @@ defmodule Voka.OSDict do
         single_def
       ])
       |> optional(ignore(repeat(string("\n"))))
-      |> reduce({:to_word, []})
+      |> tag(:word)
     )
-
-  defp to_word([word, phonetic, {:nature, nature}, {:defs, defs}]) do
-    nature = unwrap(nature)
-    %{word: word, phonetic: phonetic, nature: nature, defs: defs}
-  end
-
-  defp unwrap([item]), do: unwrap(item)
-  defp unwrap(item), do: item
 
   defparsec(:parse_result, result, debug: true)
 

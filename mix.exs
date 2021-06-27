@@ -25,7 +25,8 @@ defmodule Voka.MixProject do
       {:jason, "~> 1.2"},
       {:tesla, "~> 1.4"},
       {:cubdb, "~> 1.0.0-rc.10"},
-      {:nimble_parsec, "~> 1.1"}
+      {:nimble_parsec, "~> 1.1"},
+      {:nimble_csv, "~> 1.1"}
     ]
   end
 end
