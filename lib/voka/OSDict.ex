@@ -16,37 +16,60 @@ defmodule Voka.OSDict do
   defp cast_parsed(results) do
     defs =
       Enum.map(results, fn {:word,
-                            [word, phonetic, {:nature, nature}, [{:translation, translations}]]} ->
-        nature = unwrap_nature(nature)
+                            [
+                              word,
+                              {:phonetic, phonetic},
+                              {:nature, nature}
+                              | translations
+                            ]} ->
+        nature = unwrap(nature)
         translations = unwrap_defs(translations, nil, [])
-        %{word: word, phonetic: phonetic, nature: nature, translations: translations}
+        %{word: word, phonetic: unwrap(phonetic), nature: nature, translations: translations}
       end)
 
     {:ok, defs}
   end
 
-  defp unwrap_nature([item]), do: unwrap_nature(item)
-  defp unwrap_nature(item), do: item
+  defp unwrap([item]), do: unwrap(item)
+  defp unwrap(item), do: item
 
-  defp unwrap_defs(list, context, acc)
-
-  defp unwrap_defs([{:context, [ctx]} | rest], _, acc) do
-    unwrap_defs(rest, ctx, acc)
+  defp unwrap_defs(list, context, acc) do
+    list
+    |> :lists.flatten()
+    |> unwrap_def(context, acc)
+    |> elem(1)
   end
 
-  defp unwrap_defs([{:trans, [trans]} | rest], ctx, acc) do
-    acc = [%{context: ctx, trans: trans} | acc]
-    unwrap_defs(rest, ctx, acc)
+  defp unwrap_def([], context, acc) do
+    {context, acc}
   end
 
-  defp unwrap_defs([], _ctx, acc) do
-    acc
+  defp unwrap_def([h | t], context, acc) do
+    {context, acc} = unwrap_def(h, context, acc)
+    unwrap_def(t, context, acc)
   end
+
+  defp unwrap_def({:translation, t}, context, acc) do
+    unwrap_def(t, context, acc)
+  end
+
+  defp unwrap_def({:trans, trans}, context, acc) do
+    {context, [%{context: context, trans: trans} | acc]}
+  end
+
+  defp unwrap_def({:context, c}, _, acc) do
+    {unwrap(c), acc}
+  end
+
+  # defp unwrap_defs([{:trans, [trans]} | rest], ctx, acc) do
+  #   acc = [%{context: ctx, trans: trans} | acc]
+  #   unwrap_defs(rest, ctx, acc)
+  # end
 
   def search(word, database) do
     case System.cmd("dict", ~w(--database #{database} --nocorrect #{word})) do
       {out, 0} ->
-        IO.puts([IO.ANSI.cyan(), out, IO.ANSI.default_color()])
+        # IO.puts([IO.ANSI.cyan(), out, IO.ANSI.default_color()])
 
         case parse_result(out) do
           {:ok, acc, "", context, line, column} ->
@@ -87,22 +110,15 @@ defmodule Voka.OSDict do
   single_def =
     ignore(spaces)
     |> concat(trans_line)
-    |> reduce({List, :wrap, []})
 
   num_def =
     ignore(spaces)
     |> ignore(ascii_string([?0..?9], min: 1))
     |> ignore(string("."))
     |> ignore(spaces)
-    |> concat(trans_line)
+    |> concat(single_def)
 
-  multi_defs =
-    times(num_def, min: 2)
-    |> map({:collect_defs, []})
-
-  defp collect_defs(word) do
-    {:collected, word}
-  end
+  multi_defs = times(num_def, min: 2)
 
   result =
     ignore(ascii_string([?0..?9], 1))
@@ -119,7 +135,10 @@ defmodule Voka.OSDict do
       |> utf8_string([{:not, 32}], min: 1)
       |> ignore(spaces)
       |> ignore(string("/"))
-      |> utf8_string([{:not, ?/}], min: 1)
+      |> concat(
+        utf8_string([{:not, ?/}], min: 1)
+        |> tag(:phonetic)
+      )
       |> ignore(string("/"))
       |> ignore(spaces)
       |> optional(

@@ -3,7 +3,7 @@ defmodule Voka.FrenchFreq do
 
   @csv_source Path.join([File.cwd!(), "priv", "french-freq.csv"])
 
-  def get_most_used_words(max \\ 999_999_999_999) do
+  def get_most_used_words() do
     @csv_source
     |> IO.inspect(label: "value")
     |> File.stream!()
@@ -12,7 +12,6 @@ defmodule Voka.FrenchFreq do
       {nature, String.to_integer(freq_str), word}
     end)
     |> Enum.sort_by(fn {_, freq, _} -> freq * -1 end)
-    |> Enum.take(max)
     |> Enum.map(&elem(&1, 2))
   end
 end
