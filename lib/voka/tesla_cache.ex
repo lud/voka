@@ -23,8 +23,8 @@ defmodule Voka.TeslaCache do
     hash(url) <> hash(body)
   end
 
-  defp cache_key(%{method: :get, url: url}) do
-    hash(url) <> ".get"
+  defp cache_key(%{method: :get, url: url, query: query}) do
+    hash(url) <> hash(query)
   end
 
   defp fetch_cache(key) do
@@ -45,8 +45,6 @@ defmodule Voka.TeslaCache do
   defp maybe_write({:ok, resp}, key) do
     path = file(key)
 
-    resp |> IO.inspect(label: "resp")
-
     IO.puts("write file #{path}")
     bin = :erlang.term_to_binary(resp)
     File.write!(path, bin)
@@ -58,8 +56,12 @@ defmodule Voka.TeslaCache do
     other
   end
 
-  defp hash(str) do
+  defp hash(str) when is_binary(str) do
     :crypto.hash(:md5, str) |> Base.encode16()
+  end
+
+  defp hash(term) do
+    term |> :erlang.term_to_binary() |> hash
   end
 
   defp file(key) do
