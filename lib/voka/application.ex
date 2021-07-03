@@ -8,7 +8,7 @@ defmodule Voka.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {CubDB, name: Voka.DB, data_dir: Path.join(File.cwd!(), "db")}
+      # {CubDB, name: Voka.DB, data_dir: Path.join(File.cwd!(), "db")}
       # Starts a worker by calling: Voka.Worker.start_link(arg)
       # {Voka.Worker, arg}
     ]
