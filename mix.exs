@@ -33,7 +33,6 @@ defmodule Voka.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-
       # phoenix
       {:phoenix, github: "phoenixframework/phoenix", override: true},
       {:phoenix_html, "~> 2.11"},
