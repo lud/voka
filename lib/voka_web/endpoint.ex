@@ -7,7 +7,7 @@ defmodule VokaWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_voka_key",
-    signing_salt: "rei3PSB4"
+    signing_salt: "3WkjHalY"
   ]
 
   socket "/socket", VokaWeb.UserSocket,
@@ -27,6 +27,8 @@ defmodule VokaWeb.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
   end
 

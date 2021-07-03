@@ -36,6 +36,8 @@ defmodule Voka.MixProject do
 
       # phoenix
       {:phoenix, github: "phoenixframework/phoenix", override: true},
+      {:phoenix_html, "~> 2.11"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:telemetry_metrics, "~> 0.4"},
       {:telemetry_poller, "~> 0.4"},
       {:plug_cowboy, "~> 2.0"},
