@@ -15,7 +15,7 @@ defmodule Voka do
   end
 
   def run_to_file do
-    run
+    run()
     |> Voka.ResultCsv.stream_to_file()
     |> Stream.run()
   end
