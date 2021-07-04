@@ -1,6 +1,5 @@
 defmodule Voka.Wiki do
   require Logger
-  # @endpoint "https://api-free.deepl.com/v2"
 
   def trans_word(word, source_lang, target_lang) do
     with {:ok, result} <- word_page(word, source_lang) do

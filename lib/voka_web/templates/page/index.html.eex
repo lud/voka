@@ -1,41 +1,15 @@
-<section class="phx-hero">
-  <h1>Welcome to Phoenix!</h1>
-  <p>Peace of mind from prototype to production</p>
-</section>
-
-<section class="row">
-  <article class="column">
-    <h2>Resources</h2>
-    <ul>
-      <li>
-        <a href="https://hexdocs.pm/phoenix/overview.html">Guides &amp; Docs</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix">Source</a>
-      </li>
-      <li>
-        <a href="https://github.com/phoenixframework/phoenix/blob/v1.6/CHANGELOG.md">v1.6 Changelog</a>
-      </li>
-    </ul>
-  </article>
-  <article class="column">
-    <h2>Help</h2>
-    <ul>
-      <li>
-        <a href="https://elixirforum.com/c/phoenix-forum">Forum</a>
-      </li>
-      <li>
-        <a href="https://web.libera.chat/#elixir">#elixir on Libera Chat (IRC)</a>
-      </li>
-      <li>
-        <a href="https://twitter.com/elixirphoenix">Twitter @elixirphoenix</a>
-      </li>
-      <li>
-        <a href="https://elixir-slackin.herokuapp.com/">Elixir on Slack</a>
-      </li>
-      <li>
-        <a href="https://discord.gg/elixir">Elixir on Discord</a>
-      </li>
-    </ul>
-  </article>
-</section>
+<div class="flashcards-list">
+  <%= for {w, n} <- Enum.with_index(@words) do %>
+  <div class="flashcards-item block-n-<%= n %>">
+    <div class="fl-word"><%= w.word %></div>
+    <div class="fl-nophon">&nbsp;</div>
+    <div class="fl-block">
+      <div class="fl-word fl-es"><%= w.es %></div>
+      <div class="fl-phon fl-es_p"><%= w.es_p %></div>
+    </div>
+    <div class="fl-block">
+      <div class="fl-word fl-ca"><%= w.ca %></div>
+      <div class="fl-phon fl-ca_p"><%= w.ca_p %></div>
+    </div>
+  </div>
+  <% end %></div>

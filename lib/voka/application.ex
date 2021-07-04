@@ -13,7 +13,9 @@ defmodule Voka.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: Voka.PubSub},
       # Start the Endpoint (http/https)
-      VokaWeb.Endpoint
+      VokaWeb.Endpoint,
+      Voka.Store,
+      {Task, fn -> Voka.run() |> Enum.to_list() |> Voka.Store.put_words() end}
       # Start a worker by calling: Voka.Worker.start_link(arg)
       # {Voka.Worker, arg}
     ]

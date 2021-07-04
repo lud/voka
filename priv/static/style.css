@@ -1,0 +1,275 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,600&family=Poly:ital@0;1&family=Roboto+Slab:wght@300;400;500&family=Voces&display=swap');
+/* - * - * - * - * - * - * - * - * - * - */
+/* 1.0 CSS to make A4 print preview as default web view */
+
+/* https://pdf.math.dev/ */
+
+:root {
+
+	--pagedjs-margin-top: 0mm;
+	--pagedjs-margin-right: 0mm;
+	--pagedjs-margin-bottom: 0mm;
+	--pagedjs-margin-left: 0mm;
+	
+}
+@media screen {
+
+	 .pagedjs_pages {
+        display: flex;
+        /* width: calc(var(--pagedjs-width)); */
+        flex: 0; flex-wrap: wrap;
+        margin: 0 auto; 
+				justify-content: center;
+
+    }
+
+    .pagedjs_page {
+        margin: 10mm; border: solid 1px gray;
+    }
+}
+
+
+.flashcards-list {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-around;
+}
+.flashcards-item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: 7.25cm;
+	height: 5.2cm;
+	margin: 0.02cm 0;
+	padding: 0 .75cm;
+	border: 1px solid #aaa;
+	line-height: 1cm;
+}
+.flashcards-item:nth-child(16n) {
+	break-after: page;
+}
+
+.fl-word {
+	color: #414141;
+	font-size: .7cm;
+	line-height: 1cm;
+	font-style: italic;font-weight: 600; font-family: 'Lora';
+	/* font-style: italic;font-weight: 400; font-family: 'Poly'; */
+	/* font-weight: 400; font-family: 'Roboto Slab'; */
+	/* font-weight: 400; font-family: 'Poly'; */
+}
+
+.fl-nophon {
+	height: 0.3cm;
+}
+
+.fl-phon {
+	font-size: .38cm;
+	line-height: .5cm;
+	color: #666;
+	font-family: 'Voces';
+}
+
+.fl-block {
+
+}
+
+.fl-word {
+	/* font-size: 0.8cm; */
+	/* line-height: 1cm; */
+}
+
+
+/* - * - * - * - * - * - * - * - * - * - */
+/* 1.5 Some Custom Font Families */
+
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-Light.ttf') format('truetype');
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-Medium.ttf') format('truetype');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: 'Roboto';
+	src: url('fonts/Roboto-LightItalic.ttf') format('truetype');
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Custom Mono';
+	src: url('fonts/RobotoMono-Light.ttf') format('truetype');
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: 'Custom Mono';
+	src: url('fonts/RobotoMono-Medium.ttf') format('truetype');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: 'STIX Two Math Regular';
+	src: url('fonts/STIXTwoMath-Regular.woff2') format('woff2');
+}
+
+@font-face {
+	font-family: 'STIX Two Text';
+	src: url('fonts/STIXTwoText-Regular.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'STIX Two Text';
+	src: url('fonts/STIXTwoText-Bold.woff2') format('woff2');
+	font-weight: bold;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'STIX Two Text';
+	src: url('fonts/STIXTwoText-Italic.woff2') format('woff2');
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'STIX Two Text';
+	src: url('fonts/STIXTwoText-BoldItalic.woff2') format('woff2');
+	font-weight: bold;
+	font-style: italic;
+}
+
+/* - * - * - * - * - * - * - * - * - * - */
+/* 2.0 General Formatting */
+html { font-family: 'Roboto', sans-serif; }
+h1 { border-bottom: 1px solid black; margin-bottom: 2rem; padding-bottom: 1rem; }
+h2 { border-bottom: 0.1875rem solid black; margin-bottom: 1rem; padding-bottom: 0.5rem; }
+p {	text-align: justify; line-height: 1.4rem; }
+a { color: #347dbd; }
+a:hover { color: #FC814A; }
+mark { color: purple; background-color: inherit; }
+light-mark { color: purple; }
+img { max-width: calc(100% - 3rem); }
+.img-75mm { height: 75mm; }
+
+center { border: 0.5px solid gray; padding: 1.5rem; }
+
+pre {
+	background-color: #f0f0f0;
+	font-family: 'Custom Mono', monospace;
+	padding: 1rem;
+	font-size: smaller;
+	white-space: pre-wrap;
+}
+code { margin-bottom: 1.5rem; display: block;}
+figure {
+	margin-block-start: 2rem; margin-block-end: 2rem;
+	margin-inline-start: 0rem; margin-inline-end: 0rem;
+}
+figcaption { caption-side: top; padding-bottom: 0.75rem;
+	border-bottom: 0.5px solid gray; margin-bottom: 1.5rem;
+	color: gray; font-weight: bold;} 
+
+
+
+/* - * - * - * - * - * - * - * - * - * - */
+/* 3.1 Page Size */
+@page { size: A4 landscape; }
+
+/* 3.2 Page Breaks */
+.page-break { break-after: page; }
+
+
+/* 3.3 Page Numbers */
+/* @page { @bottom-right { content: counter(page); } } */
+
+/* - * - * - * - * - * - * - * - * - * - */
+/* 4.1 Automatic Counters */
+body {
+	counter-reset: sectionNumber;
+	counter-reset: subsectionNumber;
+	counter-reset: figureNumber;
+}
+
+h2:not(.no-counter) { counter-increment: sectionNumber; }
+h2 { counter-reset: subsectionNumber; }
+
+h3:not(.no-counter) { counter-increment: subsectionNumber; }
+h3 { counter-reset: figureNumber; }
+
+figure:not(.no-counter) { counter-increment: figureNumber; }
+
+h2:not(.no-counter):before {
+	content: counter(sectionNumber) ". ";
+}
+
+h3:not(.no-counter)::before {
+	content: counter(sectionNumber) "." counter(subsectionNumber) " ";
+}
+
+figcaption:not(.no-counter)::before {
+	content: "Fig. " counter(sectionNumber) "." counter(subsectionNumber) "." counter(figureNumber) " ";
+}
+
+/* 4.2 Headers & Footers */
+.footer { position: running(footerRunning); }
+@page {
+	@bottom-left {
+    	content: element(footerRunning); width: 80mm;
+    }
+}
+
+h2 { string-set: section content(text);	}
+h3 { string-set: subsection content(text); }
+@page {
+	@top-right { content: string(section);
+    	/* ALT: content: string(section) " - " string(subsection); */
+  	}
+}
+
+/* 4.3 Cover Pages */
+.cover-page { page: cover-page; }
+.cover-page h1 { border-bottom: 0.25rem solid white; }
+.cover-page h3 { font-weight: normal; }
+@page cover-page {
+    background-color: #347dbd; color: white;
+    @top-right { content: none; }
+    @bottom-left { content: none; }
+    @bottom-right { content: none; }
+}
+
+
+
+/* - * - * - * - * - * - * - * - * - * - */
+/* 5.1 Table of Contents */
+.table-of-contents { page: table-of-contents; }
+@page table-of-contents {
+	@top-right { content: none; }
+	@bottom-left { content: none; }
+}
+
+/* Additional CSS: Advanced Styling for TOC */
+
+
+/* 5.3 Banners */
+.banner-class {	page: top-banner; }
+@page top-banner {
+	@top-left-corner { background-color: #445a75; content: " ";}
+	@top-left {	background-color: #445a75; content: " ";}
+	@top-center { background-color: #445a75; 
+		color: white;
+		content: "Sample Banner Text";
+	}
+	@top-right { background-color: #445a75;	content: " ";}
+	@top-right-corner { background-color: #445a75; content: " ";}
+}

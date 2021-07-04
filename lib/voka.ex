@@ -1,6 +1,4 @@
 defmodule Voka do
-  @max_words 800
-
   require Logger
 
   def run do
@@ -13,7 +11,11 @@ defmodule Voka do
     |> Stream.map(&Ark.Ok.uok!/1)
     |> Stream.filter(&Ark.Ok.ok?/1)
     |> Stream.map(&Ark.Ok.uok!/1)
-    |> Stream.take(200)
+    |> Stream.take(16 * 24)
+  end
+
+  def run_to_file do
+    run
     |> Voka.ResultCsv.stream_to_file()
     |> Stream.run()
   end
@@ -38,7 +40,7 @@ defmodule Voka do
     end
   end
 
-  @stop_words ~w(le la les de du et un une des à je tu il elle on nous vous ils elles ou)
+  @stop_words ~w(si ah le la les de du et un une des à je tu il elle on nous vous ils elles ou me te se ma ta sa)
 
   defp select_french_words do
     # ~w(mort retourner)
